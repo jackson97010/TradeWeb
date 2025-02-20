@@ -406,7 +406,15 @@ def fat_tail_analysis_page():
             st.write("None")
 
     else:
-        st.info("請在左側選擇 Ticker 與日期，然後點擊 **Download & Analyze** 以進行 Fat Tail 分析。")
+        st.markdown(
+            '<div style="font-size:14px;">'
+            '📢 請在左側選擇 Ticker 與日期，然後點擊 Download & Analyze 以進行 Fat Tail 分析。<br>'
+            '<span style="font-size:12px;">⚠️ Ticker 需使用 Yahoo Finance 上的代碼。</span><br>'
+            '<span style="font-size:12px; color:gray;">範例：若要輸入台積電 2330, Ticker 中輸入 <b>2330.TW</b> 即可。</span>'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
 
 
 def main():

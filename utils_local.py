@@ -338,7 +338,14 @@ def calc_day_session_stats(df: pd.DataFrame):
     fig.update_layout(
         title="Day Session Stats",
         hovermode="x unified",
-        showlegend=False
+        showlegend=False,
+        annotations=[{
+            "text": "商品每日一分k平均值",
+            "xref": "paper", "yref": "paper",
+            "x": 0.5, "y": -0.3,
+            "showarrow": False,
+            "font": {"size": 12, "color": "gray"}
+        }]
     )
     fig.update_xaxes(title_text="Date (YYYY-MM-DD)", row=2, col=1)
     fig.update_yaxes(title_text="Mean Range", row=1, col=1)

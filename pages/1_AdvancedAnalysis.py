@@ -99,8 +99,19 @@ def advanced_analysis_page():
     start_date = st.sidebar.date_input("Start Date", value=pd.to_datetime("2025-01-01"))
     end_date   = st.sidebar.date_input("End Date",   value=pd.to_datetime("2025-02-15"))
     session    = st.sidebar.selectbox("Session (盤別)", ["full", "day", "night"], index=0)
-    data_dir   = st.sidebar.text_input("Parquet 資料夾路徑", "./kbars_data")
+# 定義下拉選單的選項
+    folder_options = ["./kbars_data", "./kbars_data_TSE", "./kbars_data_OTC", "Other"]
 
+    # 先在側邊欄建立下拉選單，預設選項為 "./kbars_data" 可根據需求調整
+    selected_option = st.sidebar.selectbox("Parquet 資料夾路徑", folder_options, index=folder_options.index("./kbars_data_OTC") if "./kbars_data_OTC" in folder_options else 0)
+
+    # 若選擇 "Other"，則顯示文字輸入框，否則使用下拉選單的選項
+    if selected_option == "Other":
+        data_dir = st.sidebar.text_input("請輸入自訂資料夾路徑", "./kbars_data")
+    else:
+        data_dir = selected_option
+
+    st.write("目前使用的資料夾路徑：", data_dir)
     # 新增 correlogram 分析的參數輸入
     st.sidebar.subheader("Correlogram 設定")
     lags = st.sidebar.number_input("選擇 lag 數量", min_value=1, max_value=60, value=30)
@@ -130,7 +141,7 @@ def advanced_analysis_page():
         st.warning("沒有可用的日K資料。")
         return
 
-    st.subheader("日K資料 (含 range)")
+    st.subheader("日K資料")
     st.dataframe(daily_df.head(10))
 
     # ==============
@@ -161,6 +172,7 @@ def advanced_analysis_page():
     # range vs volume
     # ==============
     st.subheader("range vs. volume 散佈圖")
+    st.write("一段時間內的振幅和成交量狀況")
     fig_scatter = px.scatter(
         daily_df,
         x="range",
@@ -173,6 +185,8 @@ def advanced_analysis_page():
     # Correlogram 分析 (含 95% 信賴區間)
     # ==============
     st.subheader("Correlogram 分析")
+    st.write("查看商品每日震幅在不同的天數之內的序列相關狀態")
+
     if "range" in daily_df.columns:
         corr_fig = plot_correlogram(daily_df["range"], lags=int(lags))
         st.plotly_chart(corr_fig, use_container_width=True)

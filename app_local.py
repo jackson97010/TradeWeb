@@ -1,4 +1,4 @@
-# app.py
+# app_local.py
 import streamlit as st
 import pandas as pd
 
@@ -13,7 +13,7 @@ from utils_local import (
 )
 
 def main():
-    st.title("TXF K-Bar Viewer (Local Parquet) - Main Page")
+    st.title("K-Bar Viewer-Main Page")
 
     # === 側邊欄參數輸入 ===
     st.sidebar.header("資料篩選條件")
@@ -28,8 +28,18 @@ def main():
         index=1
     )
 
-    data_dir = st.sidebar.text_input("Parquet 資料夾路徑", "./kbars_data")
+    folder_options = ["./kbars_data", "./kbars_data_TSE", "./kbars_data_OTC", "Other"]
 
+    # 先在側邊欄建立下拉選單，預設選項為 "./kbars_data" 可根據需求調整
+    selected_option = st.sidebar.selectbox("Parquet 資料夾路徑", folder_options, index=folder_options.index("./kbars_data_OTC") if "./kbars_data_OTC" in folder_options else 0)
+
+    # 若選擇 "Other"，則顯示文字輸入框，否則使用下拉選單的選項
+    if selected_option == "Other":
+        data_dir = st.sidebar.text_input("請輸入自訂資料夾路徑", "./kbars_data")
+    else:
+        data_dir = selected_option
+
+    st.write("目前使用的資料夾路徑：", data_dir)
     # === 讀取資料 ===
     st.write(f"讀取資料區間: {start_date} ~ {end_date}")
     df_1m = read_kbars_local_parquet(str(start_date), str(end_date), data_dir=data_dir)
